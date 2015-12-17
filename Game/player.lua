@@ -1,13 +1,19 @@
+local Collision = require "collision"
+
 Player = {}
 
 function Player:make (x, y)
   player = {x=x, y=y, width=32, height=32, velX=0, velY=0, acc = 40, fric = 10}
 
-  function player:load()
-
+  function player:load(colliders)
+    self.collider = Collision:make(self.x, self.y, self.height, self.width)
   end
 
   function player:update(dt)
+
+    self.oldX = self.x
+    self.oldY = self.y
+
     if love.keyboard.isDown("w") then
       self.velY = self.velY - self.acc * dt
     end
@@ -25,6 +31,10 @@ function Player:make (x, y)
 
     self.velX = self.velX - (self.velX*self.fric*dt)
     self.velY = self.velY - (self.velY*self.fric*dt)
+
+    collider:update(self, colliders)
+    player.x = collider.x
+    player.y = collider.y
   end
 
   function player:draw()
